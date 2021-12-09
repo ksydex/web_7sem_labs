@@ -1,0 +1,155 @@
+<?php
+include "db.php";
+// Check existence of id parameter before processing further
+if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
+    // Include config file
+
+
+    // Prepare a select statement
+    $sql = "SELECT * FROM projects WHERE id = ?";
+
+    if($stmt = mysqli_prepare($db, $sql)){
+        // Bind variables to the prepared statement as parameters
+        mysqli_stmt_bind_param($stmt, "i", $param_id);
+
+        // Set parameters
+        $param_id = trim($_GET["id"]);
+
+        // Attempt to execute the prepared statement
+        if(mysqli_stmt_execute($stmt)){
+            $result = mysqli_stmt_get_result($stmt);
+
+            if(mysqli_num_rows($result) == 1){
+                /* Fetch result row as an associative array. Since the result set
+                contains only one row, we don't need to use while loop */
+                $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+                // Retrieve individual field value
+                $name = $row["name"];
+                $description = $row["description"];
+                $price = $row["price"];
+            } else{
+                // URL doesn't contain valid id parameter. Redirect to error page
+                header("location: error.php");
+                exit();
+            }
+
+        } else{
+            echo "Oops! Something went wrong. Please try again later.";
+        }
+    }
+
+    // Close statement
+    mysqli_stmt_close($stmt);
+
+    // Close connection
+    mysqli_close($db);
+} else{
+    // URL doesn't contain id parameter. Redirect to error page
+    header("location: error.php");
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Курсовой проект</title>
+    <link href="styles/main.css" rel="stylesheet">
+</head>
+<body>
+<div class="header-link">
+    <h5 class="header-link__text">
+        <a href="index.php">◀ Вернуться назад</a>
+    </h5>
+</div>
+<h1 class="header-default"><?php echo $name ?></h1>
+
+<h2>Описание</h2>
+<div>
+    <div class="image-card">
+        <img src="./example.png" alt="Example">
+        <div class="image-card__info">
+            <p><i>Пример пользовательского интерфейса</i></p>
+        </div>
+    </div>
+    <h3>Что требуется</h3>
+    <ul>
+        <li>Интерфейс вида "доска"</li>
+        <li>Интерфейс вида "таймлайн"</li>
+        <li>Возможность изменять <span style="font-style: italic">статус задач</span></li>
+    </ul>
+</div>
+
+<h2>Список задач</h2>
+<table>
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Название</th>
+        <th>Описание</th>
+        <th>Статус</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>Написать черновик ПЗ</td>
+        <td>Используя MS Office Word</td>
+        <td>✅</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Спроектировать программу</td>
+        <td>Используя Draw.io</td>
+        <td>⌚</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Настроить среду разработки</td>
+        <td>Apache, MySQL, Webpack</td>
+        <td>❌</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Написать черновик ПЗ</td>
+        <td>Используя MS Office Word</td>
+        <td>❌</td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Комментарии</h2>
+<div style="max-width: 600px">
+    <div style="display: flex;">
+        <textarea placeholder="Новый комментарий..." style="width: 100%" rows="3"></textarea>
+        <button style="margin-left: 10px">Отправить</button>
+    </div>
+
+    <ul class="comments">
+        <li class="comments__card">
+            <div class="comments__card__info">
+                <p>Иванов Иван</p>
+                <p>вчера в 20:06</p>
+            </div>
+
+            <hr>
+
+            <p class="comments__text">Отличный вариант! Так и сделаем! 👍</p>
+        </li>
+        <li class="comments__card">
+            <div class="comments__card__info">
+                <p>Елена Афанасьева</p>
+                <p>вчера в 15:53</p>
+            </div>
+
+            <hr>
+
+            <p class="comments__text">Как вам такой вариант? Прошу проверить...</p>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>
