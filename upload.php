@@ -37,7 +37,9 @@ function filetimeToStr($filetime){
         if($entry == '.' || $entry == '..') continue;
         $entryWithPath = $dir .'/'. $entry;
         echo '<tr>'
-            . '<td>' . $entry . '</td>'
+            . '<td>' . $entry
+            . (strpos($entry, '.png') != false || strpos($entry, '.jpg') != false ? '<img style="max-width: 100px" src="static/'. $entry.'" />' : '')
+            . '</td>'
             . '<td>' . date('F d Y h:i A', filemtime($entryWithPath)) . '</td>'
             . '<td>'. filesize($entryWithPath) .' байт</td>'
             . '<td><a href="upload_delete.php?filename=' . $entry  . '">Удалить</a></td>'
