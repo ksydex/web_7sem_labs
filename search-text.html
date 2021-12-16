@@ -6,18 +6,27 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Поиск текста</title>
+
+    <style>
+        .highlight {
+            background: red;
+        }
+    </style>
+
 </head>
 <body>
 <input id="search-input" type="text"/>
 <button id="btn">Find it!</button>
 <button id="btn-reset">Reset it!</button>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+<p><b>Lorem <i>lorem</i></b> ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
     dolore magna
     aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
     sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 </p>
 <h1>Lorem ipsum dolor</h1>
+
+
 </body>
 
 <script>
@@ -27,7 +36,7 @@
         func(node);
     }
 
-    const allowedTagsToSearchIn = ["p", "h1"]
+    //const allowedTagsToSearchIn = ["p", "h1", "b", "i"]
 
     document.getElementById('btn').addEventListener('click', (e) => {
         const searchText = document.getElementById('search-input').value;
@@ -37,10 +46,11 @@
         resetSearch()
 
         walk(body, (node) => {
-            let text = node.innerHTML;
-            if (!text || allowedTagsToSearchIn.indexOf(node.tagName.toLowerCase()) == -1) return;
-            const newText = text.replace(regex, '<mark class="highlight">$&</mark>');
-            node.innerHTML = newText;
+            if (node.nodeType != 3) return;
+            const newSpan = document.createElement('span')
+            const newText = node.nodeValue.replace(regex, '<b class="highlight">$&</b>');
+            newSpan.innerHTML = newText
+            node.parentNode.replaceChild(newSpan, node)
         })
     })
 
@@ -53,5 +63,6 @@
         .addEventListener('click',
             (e) => resetSearch())
 </script>
+
 
 </html>
